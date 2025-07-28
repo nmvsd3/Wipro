@@ -1,0 +1,32 @@
+package com.wipro;
+
+import java.util.Scanner;
+
+//also called as Concrete class
+public class HelloWorld {
+	
+	
+	//Entry Point of java java program
+	//static is a keyword which can be called by the complier without any object
+	//void : this method does not return any value
+	//main : the name of the method recognized by the jVM as an entry point
+	//String[] args : String is a class and [] means an array so it's an array of string that can receive
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//is used to print output
+		//System is a class,out is a reference  variable, println is a method of PrintStream Class
+		//another reference variable of a system class is in and err
+		System.out.println("Hello Java World!");
+		
+		//to take input
+		Scanner sc = new Scanner(System.in);
+		
+		String var = sc.next();
+		
+		//to print error
+		System.err.print("Error in your program");
+		
+
+	}
+
+}
