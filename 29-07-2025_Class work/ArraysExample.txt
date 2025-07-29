@@ -1,0 +1,45 @@
+package com.wipro;
+
+/*class Studentss{
+	int id;
+	String name;
+	
+	Student[] sArray = new Student[10];
+}
+
+public class ArraysExample {
+	
+	//Types of Arrays
+	
+	//Single Dimensional  ,//Multi Dimensional  ,//Jagged Array
+	
+	public static void main(String[] arrays) {
+	//int[] students;
+	
+	
+	//students = new int[3];
+		int size=10;
+	int[] students = new int[size];
+	
+	
+	
+	System.out.println(students.length);
+	
+	students[0] = 101;
+	students[1] = 102;
+	students[2] = 103;
+	students[3] = 104;
+	
+	System.out.println("The array elemet at a partucular index no i.e.3: " + students[4]);
+	
+	//Enhanced for loop for an array
+	for(int itr:students){
+		System.out.println(itr);
+		
+	}
+	
+	}
+	
+	
+	
+}*/

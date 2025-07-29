@@ -1,0 +1,96 @@
+package com.wipro;
+
+public class StringExample {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		
+		//Creating a string using a literals
+		
+		String s = "Madhu"; //String Pool in Heap
+		
+		System.out.println(s.hashCode());
+		//this gives actual memory where it is stored
+		System.out.println(System.identityHashCode(s));
+		// creating a String object using new keyword
+		
+		String s1 = new String("Madhu");//Heap
+		
+		String sl = s;
+		//System.out.println(s.hashCode());
+		//System.out.println(sl.hashCode());
+		
+		//System.out.println(sl==s);
+		
+		System.out.println(s1.hashCode());// if same content as S object has then it will give the same
+		System.out.println(System.identityHashCode(s1));//different memory and different value
+		//System.out.println(sl.hashCode());
+		
+		//System.out.println(s1==sl);
+		
+		
+		//Whenever the String class overrides
+		//the hashCode() method then it is computing on the basis
+		//of the content not the memory location
+		
+		System.out.println(s==s1);//different memory references
+
+		System.out.println(s.equals(s1));//it check contnet
+		
+		//2nd use case with String concatanation how it works
+		
+		String svalue1 = "Madhu";
+		String svalue2 = "Mad" + "hu";// compile will treat it as string svale2 = "Madhu"
+//at compile time		
+		System.out.println(svalue1 ==svalue2);//true//it is compile time
+		
+		String svalue3 = "Mad";
+		String svalue4 = "hu";
+		String oldvalue = "Madhu";
+		String newvalue=svalue3+svalue4;//it will be evaluated at run time // it will be a new object on heap
+		System.out.println(newvalue);
+		
+		System.out.println(oldvalue == newvalue);//false
+		System.out.println(oldvalue.equals(newvalue));
+		
+		final String svalue5 = "Mad";
+		final String svalue6 = "hu";
+		String oldvalue1 = "Madhu";
+		String newvalue1=svalue5+svalue6;//it will be evaluated at run time // it will be a new object on heap
+		System.out.println(newvalue);
+		
+		System.out.println(oldvalue1 == newvalue1);//true
+		System.out.println(oldvalue1.equals(newvalue1));//true
+		
+		
+		String a = "Madhu";
+		String b = new String("Madhu");
+		
+		String c = b;
+		
+		System.out.println(a==b);
+		System.out.println(a==c);
+		
+		String a1 = "Madhu";
+		String b1 = new String("Madhu");
+		
+		String c1 = b1.intern();
+		
+		System.out.println(a1==b1);
+		System.out.println(a1==c1);
+		
+	}
+
+}
+
+
+//literals
+//new keyword
+//hashCode()
+// identityHashCode()
+//concatenation at compiler time and runtime
+// == (comparing the memory reference)
+// .equals (comparing the content)
+// .intern()(forcing manually to use it as a string pool version)
+

@@ -1,0 +1,86 @@
+package com.wipro;
+
+import java.util.Scanner;
+
+public class Student1 {
+
+    int id;
+    String name;
+    int[] marks;
+
+    public Student1() {
+        super();
+    }
+
+    // Constructor
+    public Student1(int id, String name, int[] marks) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.marks = marks;
+    }
+
+    public void displayInfo() {
+        System.out.println("Student Id: " + id);
+        System.out.println("Student Name: " + name);
+        System.out.println("Student Marks: ");
+        for (int mark : marks) {
+            System.out.print(mark + " ");
+        }
+        System.out.println("\n----------------------");
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("How many students you want to add in a Batch?");
+        int batchSize = sc.nextInt();
+        Student1[] students = new Student1[batchSize];
+
+        // Creating jagged array 
+        int[][] batchMarks = new int[batchSize][];
+
+        for (int i = 0; i < students.length; i++) {
+            System.out.println("Enter student Id: ");
+            int id = sc.nextInt();
+
+            System.out.println("Enter student name: ");
+            String name = sc.next();
+
+            System.out.println("Enter number of subjects: ");
+            int n = sc.nextInt();
+            int[] marks = new int[n];
+
+            System.out.println("Enter marks for " + n + " subjects:");
+            for (int j = 0; j < n; j++) {
+                System.out.print("Subject " + (j + 1) + ": ");
+                marks[j] = sc.nextInt();
+            }
+
+            // Assign marks to jagged array
+            batchMarks[i] = marks;
+
+            // Create student object
+            students[i] = new Student1(id, name, marks);
+        }
+
+        // Display student details
+        System.out.println("\nStudents details are given below:");
+        for (Student1 s : students) {
+            s.displayInfo();
+        }
+
+       
+        System.out.println("\nJagged Array of Marks for the Batch:");
+        for (int i = 0; i < batchMarks.length; i++) {
+            System.out.print("Student " + (i + 1) + " Marks: ");
+            for (int mark : batchMarks[i]) {
+                System.out.print(mark + " ");
+            }
+            System.out.println();
+        }
+
+        sc.close();
+    }
+}

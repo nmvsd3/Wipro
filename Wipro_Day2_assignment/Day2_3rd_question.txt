@@ -1,0 +1,34 @@
+public class Main {
+
+    public static void main(String[] args) {
+        // Join the command-line arguments into one string with spaces
+        StringBuilder input = new StringBuilder();
+        for (int i = 0; i < args.length; i++) {
+            input.append(args[i]);
+            if (i != args.length - 1) {
+                input.append(" ");
+            }
+        }
+
+        // Call method to reverse each word
+        String output = reverseEachWord(input.toString());
+
+        // Print final output
+        System.out.println(output);
+    }
+
+    public static String reverseEachWord(String input) {
+        String[] words = input.split(" ");
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++) {
+            StringBuilder reversed = new StringBuilder(words[i]);
+            result.append(reversed.reverse());
+            if (i != words.length - 1) {
+                result.append(" ");
+            }
+        }
+
+        return result.toString();
+    }
+}
