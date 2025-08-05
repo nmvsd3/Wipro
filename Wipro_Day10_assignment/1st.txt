@@ -1,0 +1,71 @@
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner s = new Scanner(System.in);
+
+        int x = s.nextInt();
+        int y = s.nextInt();
+        A1 a = new A1(x, y);
+
+        System.out.println("ARITHEMATIC OPERATIONS");
+
+        Thread t1 = new Thread(new Runnable() {
+            public void run() {
+                System.out.println("SUM " + (a.i + a.j));
+            }
+        });
+        t1.start();
+        try { t1.join(); } catch (Exception e) {}
+
+        Thread t2 = new Thread(new Runnable() {
+            public void run() {
+                System.out.println("DIFFERENCE " + (a.i - a.j));
+            }
+        });
+        t2.start();
+        try { t2.join(); } catch (Exception e) {}
+
+        Thread t3 = new Thread(new Runnable() {
+            public void run() {
+                System.out.println(" PRODUCT  " + (a.i * a.j)); // two spaces after PRODUCT
+            }
+        });
+        t3.start();
+        try { t3.join(); } catch (Exception e) {}
+
+        Thread t4 = new Thread(new Runnable() {
+            public void run() {
+                if (a.j != 0) {
+                    System.out.println("RATIO  " + (a.i / a.j)); // two spaces after RATIO
+                } else {
+                    System.out.println("RATIO  Undefined"); // for consistency
+                }
+            }
+        });
+        t4.start();
+        try { t4.join(); } catch (Exception e) {}
+
+        Thread t5 = new Thread(new Runnable() {
+            public void run() {
+                System.out.println("POWER  " + Math.pow(a.i, a.j)); // two spaces after POWER
+            }
+        });
+        t5.start();
+        try { t5.join(); } catch (Exception e) {}
+
+        System.out.println("END OF A");
+    }
+
+    static class A1 {
+
+        int i, j;
+
+        A1(int x, int y) {
+            i = x;
+            j = y;
+        }
+    }
+}
