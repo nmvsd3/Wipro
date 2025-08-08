@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banner Page with Glass Effect</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .banner {
+        position: relative;
+        height: 100vh;
+        background: url('image.png') no-repeat center center/cover; 
+    }
+
+   
+    nav {
+        display: flex;
+        justify-content: flex-start;
+        padding: 20px 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+    }
+    nav ul li a {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    
+    .banner-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 40px 60px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    .banner-content h1 {
+        font-size: 48px;
+        margin-bottom: 20px;
+    }
+    .banner-content a {
+        display: inline-block;
+        padding: 10px 20px;
+        border: 2px solid white;
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+    .banner-content a:hover {
+        background: white;
+        color: black;
+    }
+</style>
+</head>
+<body>
+
+<section class="banner">
+    <nav>
+        <ul>
+            <li><a href="#">HOME</a></li>
+            <li><a href="#">ABOUT</a></li>
+            <li><a href="#">PORTFOLIO</a></li>
+            <li><a href="#">SERVICES</a></li>
+            <li><a href="#">CONTACT</a></li>
+        </ul>
+    </nav>
+
+    <div class="banner-content">
+        <h1>Banner Text</h1>
+        <a href="#">Contact us</a>
+    </div>
+</section>
+
+</body>
+</html>
