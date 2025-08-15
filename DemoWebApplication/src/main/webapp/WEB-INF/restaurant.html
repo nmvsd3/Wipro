@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant</title>
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+<header>
+    <marquee behavior="scroll" direction="left">🍽 Welcome to ABC RESTAURANT 🍽</marquee>
+</header>
+
+<div class="main-layout">
+    <nav class="sidebar">
+        <button onclick="showPage('home')">🏠 Home</button>
+        <button onclick="showPage('add')">➕ Add Items</button>
+        <button onclick="showPage('view')">📋 View Items</button>
+    </nav>
+
+    <div class="content">
+        <!-- Home -->
+        <section id="home" class="page active"></section>
+
+        <!-- Add Items -->
+        <section id="add" class="page">
+            <div class="glass-card">
+                <h2>Add New Menu Item</h2>
+                <form id="menuForm">
+                    <input type="hidden" id="editIndex" value="">
+
+                    <!-- Item Name -->
+                    <input type="text" id="itemName" placeholder="Item Name" required>
+
+                    <!-- Item Description -->
+                    <textarea id="itemDesc" placeholder="Description" required></textarea>
+
+                    <!-- Category -->
+                    <select id="itemCategory" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Veg">Veg</option>
+                        <option value="Non-Veg">Non-Veg</option>
+                    </select>
+
+                    <!-- Price -->
+                    <input type="number" id="itemPrice" placeholder="Price" min="0" step="0.01" required>
+
+                    <!-- Availability -->
+                    <select id="itemAvailability" required>
+                        <option value="" disabled selected>Availability</option>
+                        <option value="Available">Available</option>
+                        <option value="Unavailable">Unavailable</option>
+                    </select>
+
+                    <!-- Submit Button -->
+                    <button type="submit">Add Item</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- View Items -->
+        <section id="view" class="page">
+            <table id="menuTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Availability</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </div>
+</div>
+
+<footer>
+    <p>© 2025 ABC Restaurant. All rights reserved.</p>
+</footer>
+
+<script src="static/script.js"></script>
+</body>
+</html>
