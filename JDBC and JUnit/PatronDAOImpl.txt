@@ -1,0 +1,81 @@
+package com.library.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import com.library.model.Patron;
+import com.library.util.H2DatabaseUtil;
+
+public class PatronDAOImpl implements PatronDAO {
+
+    @Override
+    public boolean addPatron(Patron patron) {
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            H2DatabaseUtil.initializeDatabaseSchema(connection);
+            String sql = "INSERT INTO Patrons (name, email) VALUES (?, ?)";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, patron.getName());
+            ps.setString(2, patron.getEmail());
+            int rowsInserted = ps.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updatePatron(Patron patron) {
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            String sql = "UPDATE Patrons SET name = ?, email = ? WHERE patronId = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, patron.getName());
+            ps.setString(2, patron.getEmail());
+            ps.setInt(3, patron.getPatronId());
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deletePatron(int patronId) {
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            String sql = "DELETE FROM Patrons WHERE patronId = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, patronId);
+            int rowsDeleted = ps.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Patron getPatronById(int patronId) {
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            String sql = "SELECT * FROM Patrons WHERE patronId = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, patronId);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return extractPatronFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Patron extractPatronFromResultSet(ResultSet resultSet) throws SQLException {
+        Patron patron = new Patron();
+        patron.setPatronId(resultSet.getInt("patronId"));
+        patron.setName(resultSet.getString("name"));
+        patron.setEmail(resultSet.getString("email"));
+        return patron;
+    }
+}

@@ -1,0 +1,107 @@
+package com.library.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import com.library.model.Book;
+import com.library.util.H2DatabaseUtil;
+
+public class BookDAOImpl implements BookDAO {
+
+    @Override
+    public boolean addBook(Book book) {
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            H2DatabaseUtil.initializeDatabaseSchema(connection);
+            String sql = "INSERT INTO Books (title, author, isbn, availability) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, book.getTitle());
+            ps.setString(2, book.getAuthor());
+            ps.setString(3, book.getIsbn());
+            ps.setBoolean(4, book.isAvailability());
+            int rowsInserted = ps.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateBook(Book book) {
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            String sql = "UPDATE Books SET title = ?, author = ?, isbn = ?, availability = ? WHERE bookId = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, book.getTitle());
+            ps.setString(2, book.getAuthor());
+            ps.setString(3, book.getIsbn());
+            ps.setBoolean(4, book.isAvailability());
+            ps.setInt(5, book.getBookId());
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteBook(int bookId) {
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            String sql = "DELETE FROM Books WHERE bookId = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, bookId);
+            int rowsDeleted = ps.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Book getBookById(int bookId) {
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            String sql = "SELECT * FROM Books WHERE bookId = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, bookId);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return extractBookFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Book> searchBooks(String keyword) {
+        List<Book> books = new ArrayList<>();
+        try (Connection connection = H2DatabaseUtil.getConnection()) {
+            String sql = "SELECT * FROM Books WHERE LOWER(title) LIKE ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, "%" + keyword.toLowerCase() + "%");
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Book book = extractBookFromResultSet(resultSet);
+                books.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+
+    private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setBookId(resultSet.getInt("bookId"));
+        book.setTitle(resultSet.getString("title"));
+        book.setAuthor(resultSet.getString("author"));
+        book.setIsbn(resultSet.getString("isbn"));
+        book.setAvailability(resultSet.getBoolean("availability"));
+        return book;
+    }
+}
