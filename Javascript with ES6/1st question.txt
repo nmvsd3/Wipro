@@ -1,0 +1,14 @@
+// write your solution here
+function checkOddEven(number) {
+    if (number % 2 === 0) {
+        console.log(number + " is even.");
+    } else {
+        console.log(number + " is odd.");
+    }
+}
+
+// Testing the function
+checkOddEven(5);
+checkOddEven(10);
+checkOddEven(7);
+checkOddEven(2);
