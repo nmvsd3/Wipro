@@ -1,0 +1,19 @@
+package com.gl.flightSystem.flightRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.gl.flightSystem.entities.Flight;
+
+public interface FlightRepository {
+
+    Flight saveFlight(Flight flight);
+
+    Optional<Flight> getFlightByFlightNumber(int flightNumber);
+
+    List<Flight> getAllFlights();
+
+    void updateFlight(Flight flight);
+
+    void deleteFlight(int flightNumber);
+}

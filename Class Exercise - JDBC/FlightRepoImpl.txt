@@ -1,0 +1,85 @@
+package com.gl.flightSystem.flightRepository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.gl.flightSystem.entities.Flight;
+
+@Repository
+public class FlightRepositoryImpl implements FlightRepository {
+
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    public FlightRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public Flight saveFlight(Flight flight) {
+        String sql = "INSERT INTO flights (flightNumber, flightName, arrival, departure, journey) "
+                   + "VALUES (:flightNumber, :flightName, :arrival, :departure, :journey)";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("flightNumber", flight.getFlightNumber());
+        params.put("flightName", flight.getFlightName());
+        params.put("arrival", flight.getArrival());
+        params.put("departure", flight.getDeparture());
+        params.put("journey", flight.getJourney());
+
+        jdbcTemplate.update(sql, params);
+        return flight;
+    }
+
+    @Override
+public Optional<Flight> getFlightByFlightNumber(int flightNumber) {
+    String sql = "SELECT * FROM flights WHERE flightNumber = :flightNumber";
+
+    Map<String, Object> params = new HashMap<>();
+    params.put("flightNumber", flightNumber);
+
+    List<Flight> flights = jdbcTemplate.query(sql, params,
+            new BeanPropertyRowMapper<>(Flight.class));
+
+    // return null instead of Optional.empty()
+    return flights.isEmpty() ? null : Optional.of(flights.get(0));
+}
+
+
+    @Override
+    public List<Flight> getAllFlights() {
+        String sql = "SELECT * FROM flights";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Flight.class));
+    }
+
+    @Override
+    public void updateFlight(Flight flight) {
+        String sql = "UPDATE flights SET flightName = :flightName, arrival = :arrival, "
+                   + "departure = :departure, journey = :journey "
+                   + "WHERE flightNumber = :flightNumber";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("flightNumber", flight.getFlightNumber());
+        params.put("flightName", flight.getFlightName());
+        params.put("arrival", flight.getArrival());
+        params.put("departure", flight.getDeparture());
+        params.put("journey", flight.getJourney());
+
+        jdbcTemplate.update(sql, params);
+    }
+
+    @Override
+    public void deleteFlight(int flightNumber) {
+        String sql = "DELETE FROM flights WHERE flightNumber = :flightNumber";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("flightNumber", flightNumber);
+
+        jdbcTemplate.update(sql, params);
+    }
+}

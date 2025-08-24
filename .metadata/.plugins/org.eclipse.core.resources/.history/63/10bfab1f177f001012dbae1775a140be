@@ -1,0 +1,32 @@
+package com.example.hiborm;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import com.example.hiborm.model.Employee;
+import com.example.hiborm.util.HibernateUtil;
+
+/**
+ * Hello world!
+ *
+ */
+public class App
+{
+	public static void main( String[] args )
+{
+		// to obtain/get the session from sessionfactory (It can be multiple session based on multiple servie)
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		// To create a transaction ( Transient + Persistent) -- Transient when you do not to reflec
+		Transaction tx = session.beginTransaction();
+
+		Employee emp = new Employee("Madhu", "Madhu@gmail.com"); // transient
+
+		session.persist(emp); // Make a transient instance persistent
+
+		tx.commit(); // Commit the current resource transaction, writing any unflushed changes to the d
+		
+		// Read the data
+		Employee eData = session.get(Employee.class, emp.getId());
+		System.out.println("Retrieved the Data : " + eData);
+	}
+}

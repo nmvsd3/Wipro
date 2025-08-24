@@ -1,0 +1,5 @@
+package com.gl.configstyles.service;
+
+public interface NotificationService {
+    ServiceResponse sendNotification(String notification);
+}
