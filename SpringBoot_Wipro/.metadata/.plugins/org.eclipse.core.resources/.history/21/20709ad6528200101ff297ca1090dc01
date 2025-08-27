@@ -1,0 +1,5 @@
+package com.example.geh.exception;
+
+public class ResourceNotFoundException {
+
+}

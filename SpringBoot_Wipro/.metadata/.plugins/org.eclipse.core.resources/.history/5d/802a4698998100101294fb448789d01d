@@ -1,0 +1,5 @@
+package com.example.springbootstarter.entity;
+
+public class Customer {
+
+}
