@@ -1,0 +1,52 @@
+package com.gl.securityTest.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+@SuppressWarnings("deprecation")
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication()
+            .withUser("admin1@gmail.com").password("{noop}admin1@123").roles("ADMIN")
+            .and()
+            .withUser("user1@gmail.com").password("{noop}user1@123").roles("CUST")
+            .and()
+            .withUser("user2@gmail.com").password("{noop}user2@123").roles("EMP");
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests()
+                // open endpoint
+                .antMatchers("/home").permitAll()
+                // authenticated users
+                .antMatchers("/welcome").authenticated()
+                // role-based access
+                .antMatchers("/admin").hasRole("ADMIN")
+                .antMatchers("/emp").hasRole("EMP")
+                .antMatchers("/cust").hasRole("CUST")
+                // any other request requires authentication
+                .anyRequest().authenticated()
+            .and()
+            // use Spring Security default login page
+            .formLogin()
+                .defaultSuccessUrl("/welcome", true) // redirect after login
+                .failureUrl("/login?error")          // redirect on failure
+                .permitAll()
+            .and()
+            // logout
+            .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/home")
+                .permitAll();
+    }
+}
