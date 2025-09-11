@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Google Play Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+   
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="logo-section">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Play Store</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="user-profile">
+                <div class="user-avatar" th:text="${user.name != null ? user.name.substring(0,1).toUpperCase() : 'U'}">U</div>
+                <div class="user-info">
+                    <div class="user-name" th:text="${user.name}">User Name</div>
+                    <div class="user-role">User</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="nav-section">
+            <div class="nav-title">Main</div>
+            <a href="/user/dashboard" class="nav-item active">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="/user/apps/search?name=" class="nav-item">
+                <i class="fas fa-th-large nav-icon"></i>
+                <span class="nav-text">Browse Apps</span>
+            </a>
+            <a href="/user/apps/downloads" class="nav-item">
+                <i class="fas fa-download nav-icon"></i>
+                <span class="nav-text">My Downloads</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Categories</div>
+            <a href="/user/apps/category?genre=games" class="nav-item">
+                <i class="fas fa-gamepad nav-icon"></i>
+                <span class="nav-text">Games</span>
+            </a>
+            <a href="/user/apps/category?genre=education" class="nav-item">
+                <i class="fas fa-graduation-cap nav-icon"></i>
+                <span class="nav-text">Education</span>
+            </a>
+            <a href="/user/apps/category?genre=entertainment" class="nav-item">
+                <i class="fas fa-film nav-icon"></i>
+                <span class="nav-text">Entertainment</span>
+            </a>
+            <a href="/user/apps/category?genre=music" class="nav-item">
+                <i class="fas fa-music nav-icon"></i>
+                <span class="nav-text">Music</span>
+            </a>
+        </div>
+
+       <a href="#" class="nav-item" id="notificationsLink">
+    <i class="fas fa-bell nav-icon"></i>
+    <span class="nav-text">Notifications</span>
+    <span class="nav-badge" th:if="${notifications != null and notifications.size() > 0}" th:text="${notifications.size()}">0</span>
+</a>
+
+            <a href="/user/logout" class="nav-item">
+                <i class="fas fa-sign-out-alt nav-icon"></i>
+                <span class="nav-text">Logout</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome back, <span th:text="${user.name}">User</span>!</h1>
+            <p class="welcome-subtitle">Discover amazing apps and manage your downloads from your personal dashboard</p>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon blue">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <h3 class="card-title">Browse Apps</h3>
+                </div>
+                <div class="card-content">
+                    <p class="card-description">Explore our vast collection of apps and games. Find your next favorite app from thousands of options.</p>
+                </div>
+                <div class="card-actions">
+                    <a href="/user/apps/search?name=" class="card-btn btn-primary">
+                        <i class="fas fa-search"></i>
+                        Browse All Apps
+                    </a>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon green">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3 class="card-title">My Downloads</h3>
+                </div>
+                <div class="card-content">
+                    <p class="card-description">Manage your downloaded apps, check for updates, and organize your app library.</p>
+                </div>
+                <div class="card-actions">
+                    <a href="/user/apps/downloads" class="card-btn btn-primary">
+                        <i class="fas fa-folder-open"></i>
+                        View Downloads
+                    </a>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon purple">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="card-title">Recommendations</h3>
+                </div>
+                <div class="card-content">
+                    <p class="card-description">Get personalized app recommendations based on your interests and download history.</p>
+                </div>
+                <div class="card-actions">
+                    <a href="/user/apps/search?name=" class="card-btn btn-secondary">
+                        <i class="fas fa-magic"></i>
+                        Discover Apps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Browser -->
+        <div class="category-browser">
+            <h2 class="browser-title">
+                <i class="fas fa-filter"></i>
+                Browse by Category
+            </h2>
+            
+            <form th:action="@{/user/apps/category}" method="get" class="category-form">
+                <div class="form-group">
+                    <label class="form-label" for="genre">Select Category</label>
+                    <select name="genre" id="genre" class="form-select" required>
+                        <option value="">-- Choose a category --</option>
+                        <option value="games">🎮 Games</option>
+                        <option value="beauty">💄 Beauty</option>
+                        <option value="fashion">👗 Fashion</option>
+                        <option value="health">🏥 Health</option>
+                        <option value="music">🎵 Music</option>
+                        <option value="education">📚 Education</option>
+                        <option value="entertainment">🎬 Entertainment</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-search"></i>
+                    View Apps
+                </button>
+            </form>
+        </div>
+
+        <!-- Notifications -->
+           <div class="notifications-section hidden" id="notificationsSection"> <!-- HIDDEN by default -->
+            <div class="notifications-header">
+                <h2 class="notifications-title">
+                    <i class="fas fa-bell"></i>
+                    Notifications
+                </h2>
+            </div>
+
+            <div th:if="${notifications != null and !notifications.isEmpty()}">
+                <div th:each="notification : ${notifications}" class="notification-item">
+                    <div class="notification-header">
+                        <div class="notification-subject" th:text="${notification.subject}">Notification Subject</div>
+                        <div class="notification-time" th:text="${notification.createdAt}">Time</div>
+                    </div>
+                    <div class="notification-body" th:text="${notification.body}">Notification body content</div>
+                </div>
+            </div>
+
+            <div th:if="${notifications == null or notifications.isEmpty()}" class="no-notifications">
+                <i class="fas fa-bell-slash"></i>
+                <div>No notifications yet.</div>
+                <p>You'll see important updates and app news here.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const mainContent = document.getElementById('mainContent');
+
+            // Mobile menu toggle
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            });
+
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            });
+
+            // Close sidebar when clicking a nav item on mobile
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 1024) {
+                        sidebar.classList.remove('show');
+                        overlay.classList.remove('show');
+                    }
+                });
+            });
+            const notificationsLink = document.getElementById('notificationsLink');
+            const notificationsSection = document.getElementById('notificationsSection');
+
+            notificationsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                notificationsSection.classList.toggle('hidden');
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 1024) {
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                }
+            });
+
+            // Form validation
+            const categoryForm = document.querySelector('.category-form');
+            const genreSelect = document.getElementById('genre');
+
+            categoryForm.addEventListener('submit', function(e) {
+                if (!genreSelect.value) {
+                    e.preventDefault();
+                    genreSelect.focus();
+                    genreSelect.style.borderColor = 'var(--play-red)';
+                    
+                    setTimeout(() => {
+                        genreSelect.style.borderColor = 'var(--google-grey-300)';
+                    }, 3000);
+                }
+            });
+
+            // Smooth scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            const animatedElements = document.querySelectorAll('.dashboard-card, .category-browser, .notifications-section');
+            animatedElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(element);
+            });
+
+            // Add loading states to buttons
+            const buttons = document.querySelectorAll('.card-btn, .submit-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.tagName === 'BUTTON') {
+                        this.style.opacity = '0.7';
+                        this.style.pointerEvents = 'none';
+                        
+                        setTimeout(() => {
+                            this.style.opacity = '1';
+                            this.style.pointerEvents = 'auto';
+                        }, 2000);
+                    }
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97bd9a33c3fc7f2e',t:'MTc1NzMyNTY2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

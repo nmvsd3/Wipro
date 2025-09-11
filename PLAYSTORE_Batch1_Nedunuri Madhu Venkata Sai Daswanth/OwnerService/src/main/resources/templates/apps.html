@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Apps - Google Play Console</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/apps.css">
+    <style>
+        :root {
+            --google-blue: #1a73e8;
+            --google-blue-hover: #1557b0;
+            --google-green: #34a853;
+            --google-green-hover: #2d7a3f;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-orange: #ff6d01;
+            --google-grey-50: #f8f9fa;
+            --google-grey-100: #f1f3f4;
+            --google-grey-200: #e8eaed;
+            --google-grey-300: #dadce0;
+            --google-grey-400: #bdc1c6;
+            --google-grey-500: #9aa0a6;
+            --google-grey-600: #80868b;
+            --google-grey-700: #5f6368;
+            --google-grey-800: #3c4043;
+            --google-grey-900: #202124;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--google-grey-800);
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--google-blue), var(--google-green));
+            color: white;
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand {
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-brand:hover {
+            color: white;
+        }
+
+        .play-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--google-blue);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--google-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-info h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .user-info p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--google-grey-500);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 20px 10px;
+            margin-bottom: 10px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            color: var(--google-grey-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: var(--google-grey-50);
+            color: var(--google-blue);
+            border-right-color: var(--google-blue);
+        }
+
+        .nav-link.active {
+            background: rgba(26, 115, 232, 0.1);
+            color: var(--google-blue);
+            border-right-color: var(--google-blue);
+            font-weight: 600;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .nav-badge {
+            background: var(--google-red);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: auto;
+            font-weight: 600;
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--google-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Main Content Area */
+        .main-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .apps-header {
+            background: white;
+            color: var(--google-grey-800);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--google-grey-200);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--google-grey-800);
+            margin: 0;
+        }
+
+        .breadcrumb-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--google-grey-600);
+            font-size: 16px;
+        }
+
+        .breadcrumb-nav a {
+            color: var(--google-grey-600);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .breadcrumb-nav a:hover {
+            color: var(--google-blue);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 2rem;
+        }
+
+        .page-title {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--google-grey-800);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-subtitle {
+            color: var(--google-grey-600);
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: rgba(52, 168, 83, 0.1);
+            color: var(--google-green);
+            border-left: 4px solid var(--google-green);
+        }
+
+        .alert-danger {
+            background: rgba(234, 67, 53, 0.1);
+            color: var(--google-red);
+            border-left: 4px solid var(--google-red);
+        }
+
+        /* Apps Grid */
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* App Cards */
+        .app-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--google-blue), var(--google-green));
+        }
+
+        .app-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--google-blue), var(--google-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+
+        .app-info h3 {
+            font-weight: 700;
+            color: var(--google-grey-800);
+            margin-bottom: 8px;
+            font-size: 22px;
+            line-height: 1.2;
+        }
+
+        .app-genre {
+            color: var(--google-grey-600);
+            font-size: 14px;
+            background: var(--google-grey-100);
+            padding: 6px 16px;
+            border-radius: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .visibility-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .visibility-badge.visible {
+            background: rgba(52, 168, 83, 0.15);
+            color: var(--google-green);
+            border: 2px solid rgba(52, 168, 83, 0.3);
+        }
+
+        .visibility-badge.hidden {
+            background: rgba(234, 67, 53, 0.15);
+            color: var(--google-red);
+            border: 2px solid rgba(234, 67, 53, 0.3);
+        }
+
+        /* App Stats */
+        .app-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 15px;
+            background: var(--google-grey-50);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: var(--google-grey-100);
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--google-grey-800);
+            margin-bottom: 5px;
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--google-grey-600);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* App Actions */
+        .app-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Google Sans', sans-serif;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 10px 18px;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--google-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--google-blue-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--google-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--google-green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 168, 83, 0.3);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--google-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d33b2c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(234, 67, 53, 0.3);
+            color: white;
+        }
+
+        /* Announcement Form */
+        .announcement-form {
+            padding-top: 25px;
+            border-top: 2px solid var(--google-grey-100);
+        }
+
+        .announcement-form h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--google-grey-800);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .announcement-form .form-control {
+            border: 2px solid var(--google-grey-300);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .announcement-form .form-control:focus {
+            border-color: var(--google-blue);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+            outline: none;
+        }
+
+        .announcement-form .form-control::placeholder {
+            color: var(--google-grey-500);
+        }
+
+        .btn-announce {
+            background: linear-gradient(135deg, var(--google-orange), #e65100);
+            color: white;
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        .btn-announce:hover {
+            background: linear-gradient(135deg, #e65100, #bf360c);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 109, 1, 0.3);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .empty-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--google-grey-200), var(--google-grey-300));
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            color: var(--google-grey-500);
+            font-size: 48px;
+        }
+
+        .empty-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--google-grey-700);
+            margin-bottom: 15px;
+        }
+
+        .empty-subtitle {
+            color: var(--google-grey-500);
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* Add New App Button */
+        .add-app-btn {
+            background: linear-gradient(135deg, var(--google-green), var(--google-green-hover));
+            color: white;
+            padding: 18px 35px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(52, 168, 83, 0.3);
+            margin-bottom: 40px;
+        }
+
+        .add-app-btn:hover {
+            background: linear-gradient(135deg, var(--google-green-hover), #1b5e20);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(52, 168, 83, 0.4);
+            color: white;
+        }
+
+        /* Navigation Links */
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--google-grey-200);
+        }
+
+        .nav-link-btn {
+            background: var(--google-grey-100);
+            color: var(--google-grey-700);
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link-btn:hover {
+            background: var(--google-grey-200);
+            color: var(--google-grey-800);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+            
+            .main-wrapper {
+                margin-left: 0;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .app-card {
+                padding: 20px;
+            }
+            
+            .app-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .app-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+        }
+
+        /* Sidebar overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .app-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .app-card:nth-child(2) { animation-delay: 0.1s; }
+        .app-card:nth-child(3) { animation-delay: 0.2s; }
+        .app-card:nth-child(4) { animation-delay: 0.3s; }
+
+        /* Genre Icons */
+        .genre-games::before { content: "🎮"; }
+        .genre-beauty::before { content: "💄"; }
+        .genre-fashion::before { content: "👗"; }
+        .genre-health::before { content: "🏥"; }
+        .genre-music::before { content: "🎵"; }
+        .genre-education::before { content: "📚"; }
+        .genre-entertainment::before { content: "🎬"; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar Toggle Button (Mobile) -->
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/owner/dashboard" class="sidebar-brand">
+                    <div class="play-icon">
+                        <i class="fab fa-google-play"></i>
+                    </div>
+                    Play Console
+                </a>
+                <div class="sidebar-user">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <h4>App Developer</h4>
+                        <p>Owner</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <div class="nav-item">
+                        <a href="/owner/dashboard" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/owner/apps/upload" class="nav-link">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Upload App</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Apps</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>My Apps</span>
+                            <span class="nav-badge" th:text="${apps != null ? apps.size() : 0}">0</span>
+                        </a>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-star"></i>
+                            <span>Reviews</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Tools</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                            <span class="nav-badge">0</span>
+                        </a>
+                    <div class="nav-item">
+                        <a href="/owner/logout" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <!-- Header -->
+            <header class="apps-header">
+                <div class="header-content">
+                    <h1 class="header-title">My Apps</h1>
+                    <nav class="breadcrumb-nav">
+                        <a href="/owner/dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>My Apps</span>
+                    </nav>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-mobile-alt"></i>
+                            My Applications
+                        </h1>
+                        <p class="page-subtitle">Manage and monitor your published apps on the Google Play Store</p>
+                    </div>
+                    <a href="/owner/apps/upload" class="add-app-btn">
+                        <i class="fas fa-plus"></i>
+                        Add New App
+                    </a>
+                </div>
+
+                <!-- Alert Messages -->
+                <div th:if="${success}" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${success}"></span>
+                </div>
+                <div th:if="${error}" class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:text="${error}"></span>
+                </div>
+
+                <!-- Apps Grid -->
+                <div th:if="${apps != null and !#lists.isEmpty(apps)}" class="apps-grid">
+                    <div th:each="app : ${apps}" class="app-card">
+                        <div class="visibility-badge" 
+                             th:class="${app.visible} ? 'visibility-badge visible' : 'visibility-badge hidden'" 
+                             th:text="${app.visible} ? 'Live' : 'Hidden'"></div>
+                        
+                        <div class="app-header">
+                            <div class="app-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div class="app-info">
+                                <h3 th:text="${app.name}">App Name</h3>
+                                <span class="app-genre" th:class="'app-genre genre-' + ${app.genre}" th:text="${app.genre}">Category</span>
+                            </div>
+                        </div>
+
+                        <div class="app-stats">
+                            <div class="stat-item">
+                                <div class="stat-number" th:text="${app.downloadCount != null ? app.downloadCount : 0}">0</div>
+                                <div class="stat-label">Downloads</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" th:text="${app.version != null ? app.version : '1.0'}">1.0</div>
+                                <div class="stat-label">Version</div>
+                            </div>
+                           <div class="stat-item">
+    <div class="stat-number" th:text="${app.rating != null ? app.rating : 0}">0</div>
+    <div class="stat-label">Rating</div>
+</div>
+
+                        </div>
+
+                        <div class="app-actions">
+                            <a th:href="@{/owner/apps/edit/{id}(id=${app.id})}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </a>
+                            <a th:href="@{/owner/apps/{id}/reviews(id=${app.id})}" class="btn btn-success">
+                                <i class="fas fa-comments"></i>
+                                Reviews
+                            </a>
+                            <a th:href="@{/owner/apps/delete/{id}(id=${app.id})}" 
+                               onclick="return confirm('Are you sure you want to delete this app?')" 
+                               class="btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </a>
+                        </div>
+
+                        <div class="announcement-form">
+                            <h5>
+                                <i class="fas fa-bullhorn"></i>
+                                Send Announcement
+                            </h5>
+                            <form th:action="@{/owner/apps/{id}/announce(id=${app.id})}" method="post">
+                                <input type="text" name="message" class="form-control" 
+                                       placeholder="Send a message to all users of this app..." required/>
+                                <button type="submit" class="btn btn-announce">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Send Announcement
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${apps == null or #lists.isEmpty(apps)}" class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h2 class="empty-title">No Apps Published Yet</h2>
+                    <p class="empty-subtitle">
+                        You haven't uploaded any apps to the Google Play Store yet.<br>
+                        Start by uploading your first app to reach millions of users worldwide.
+                    </p>
+                    <a href="/owner/apps/upload" class="add-app-btn">
+                        <i class="fas fa-plus"></i>
+                        Upload Your First App
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="nav-links">
+                    <a href="/owner/dashboard" class="nav-link-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                    <a href="/owner/apps/upload" class="nav-link-btn">
+                        <i class="fas fa-plus"></i>
+                        Add New App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle functionality
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('show');
+            }
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when clicking nav links on mobile
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('open');
+                        sidebarOverlay.classList.remove('show');
+                    }
+                });
+            });
+
+            // Add smooth animations to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Add click animation
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // Add loading state to announcement forms
+            document.querySelectorAll('.announcement-form form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    const button = this.querySelector('button[type="submit"]');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    button.disabled = true;
+                    
+                    // Re-enable after 3 seconds (in case of error)
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }, 3000);
+                });
+            });
+
+            // Animate stats numbers
+            document.querySelectorAll('.stat-number').forEach(element => {
+                const target = parseInt(element.textContent) || 0;
+                if (target > 0) {
+                    const increment = Math.max(1, Math.floor(target / 30));
+                    let current = 0;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        element.textContent = current;
+                    }, 50);
+                }
+            });
+
+            // Add hover effects to cards
+            document.querySelectorAll('.app-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b63152427f7f8b',t:'MTc1NzI0Nzk2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

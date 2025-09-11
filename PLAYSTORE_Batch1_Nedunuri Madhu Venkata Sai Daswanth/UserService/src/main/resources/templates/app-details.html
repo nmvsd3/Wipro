@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${app.name} + ' - Google Play Store'">App Details - Google Play Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/app-details.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Play Store</span>
+            </div>
+            
+            <div class="breadcrumb">
+                <a href="/user/dashboard">Dashboard</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="/user/apps">Apps</a>
+                <i class="fas fa-chevron-right"></i>
+                <span th:text="${app.name}">App Details</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            <div th:if="${success}" class="message success">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${success}">Success message</span>
+            </div>
+            <div th:if="${error}" class="message error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${error}">Error message</span>
+            </div>
+        </div>
+
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="app-icon-large">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            
+            <div class="app-info">
+                <h1 class="app-title" th:text="${app.name}">App Name</h1>
+                
+                <div class="app-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span th:text="${app.releaseDate}">Release Date</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-code-branch"></i>
+                        <span>Version <span th:text="${app.version}">1.0</span></span>
+                    </div>
+                </div>
+
+                <div class="app-rating">
+                    <div class="stars-large">
+                        <i class="fas fa-star star-large" th:classappend="${app.rating != null and app.rating >= 1} ? 'filled' : ''"></i>
+                        <i class="fas fa-star star-large" th:classappend="${app.rating != null and app.rating >= 2} ? 'filled' : ''"></i>
+                        <i class="fas fa-star star-large" th:classappend="${app.rating != null and app.rating >= 3} ? 'filled' : ''"></i>
+                        <i class="fas fa-star star-large" th:classappend="${app.rating != null and app.rating >= 4} ? 'filled' : ''"></i>
+                        <i class="fas fa-star star-large" th:classappend="${app.rating != null and app.rating >= 5} ? 'filled' : ''"></i>
+                    </div>
+                    <span class="rating-text" th:text="${app.rating != null ? app.rating + '/5' : 'No rating'}">Rating</span>
+                </div>
+
+                <div class="app-genre" th:text="${app.genre}">Genre</div>
+
+                <div class="app-actions">
+                    <div th:if="${!isDownloaded}">
+                        <form th:action="@{/user/apps/{id}/download(id=${app.id})}" method="post" style="display: inline;">
+                            <button type="button" class="action-btn btn-download download-btn">
+                                <i class="fas fa-download"></i>
+                                <span>Download</span>
+                            </button>
+                        </form>
+                    </div>
+                    <div th:if="${isDownloaded}">
+                        <form th:action="@{/user/apps/{id}/uninstall(id=${app.id})}" method="post" style="display: inline;">
+                            <button type="button" class="action-btn btn-uninstall uninstall-btn">
+                                <i class="fas fa-trash"></i>
+                                <span>Uninstall</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Details -->
+        <div class="app-details">
+            <h2 class="details-title">
+                <i class="fas fa-info-circle"></i>
+                App Information
+            </h2>
+            
+            <div class="detail-item">
+                <div class="detail-label">Description:</div>
+                <div class="detail-value app-description" th:text="${app.description}">App description</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Release Date:</div>
+                <div class="detail-value" th:text="${app.releaseDate}">Release date</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Version:</div>
+                <div class="detail-value" th:text="${app.version}">Version</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Genre:</div>
+                <div class="detail-value" th:text="${app.genre}">Genre</div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h2 class="section-title">
+                <i class="fas fa-star"></i>
+                Reviews & Ratings
+            </h2>
+
+            <div class="reviews-list">
+                <div th:if="${reviews == null or #lists.isEmpty(reviews)}" class="no-reviews">
+                    <i class="fas fa-comments"></i>
+                    <div>No reviews yet. Be the first to review this app!</div>
+                </div>
+
+                <div th:if="${reviews != null and !#lists.isEmpty(reviews)}">
+                    <div th:each="review : ${reviews}" class="review-item">
+                        <div class="review-header">
+                            <div class="reviewer-name" th:text="${review.userName}">Reviewer Name</div>
+                            <div class="review-rating">
+                                <i class="fas fa-star review-star" th:classappend="${review.rating >= 1} ? 'filled' : ''"></i>
+                                <i class="fas fa-star review-star" th:classappend="${review.rating >= 2} ? 'filled' : ''"></i>
+                                <i class="fas fa-star review-star" th:classappend="${review.rating >= 3} ? 'filled' : ''"></i>
+                                <i class="fas fa-star review-star" th:classappend="${review.rating >= 4} ? 'filled' : ''"></i>
+                                <i class="fas fa-star review-star" th:classappend="${review.rating >= 5} ? 'filled' : ''"></i>
+                            </div>
+                        </div>
+                        <div class="review-comment" th:text="${review.comment}">Review comment</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Form -->
+            <div class="review-form">
+                <h3 class="form-title">
+                    <i class="fas fa-edit"></i>
+                    Write a Review
+                </h3>
+                
+                <form th:action="@{/user/apps/{id}/review(id=${app.id})}" method="post">
+                    <div class="form-group">
+                        <label class="form-label" for="userName">Your Name</label>
+                        <input type="text" id="userName" name="userName" class="form-input" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="comment">Your Review</label>
+                        <textarea id="comment" name="comment" class="form-input form-textarea" placeholder="Share your thoughts about this app..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Rating</label>
+                        <div class="rating-input">
+                            <i class="fas fa-star rating-star" data-rating="1"></i>
+                            <i class="fas fa-star rating-star" data-rating="2"></i>
+                            <i class="fas fa-star rating-star" data-rating="3"></i>
+                            <i class="fas fa-star rating-star" data-rating="4"></i>
+                            <i class="fas fa-star rating-star" data-rating="5"></i>
+                        </div>
+                        <input type="hidden" id="rating" name="rating" value="5" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        Submit Review
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <a href="/user/apps" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Back to Apps
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Rating stars functionality
+            const ratingStars = document.querySelectorAll('.rating-star');
+            const ratingInput = document.getElementById('rating');
+            let currentRating = 5;
+
+            ratingStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    currentRating = parseInt(this.dataset.rating);
+                    ratingInput.value = currentRating;
+                    updateStars();
+                });
+
+                star.addEventListener('mouseenter', function() {
+                    const hoverRating = parseInt(this.dataset.rating);
+                    highlightStars(hoverRating);
+                });
+            });
+
+            document.querySelector('.rating-input').addEventListener('mouseleave', function() {
+                updateStars();
+            });
+
+            function updateStars() {
+                ratingStars.forEach((star, index) => {
+                    if (index < currentRating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
+
+            function highlightStars(rating) {
+                ratingStars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
+
+            // Initialize stars
+            updateStars();
+
+            // Download/Uninstall button functionality
+            const downloadBtn = document.querySelector('.download-btn');
+            const uninstallBtn = document.querySelector('.uninstall-btn');
+
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    this.classList.add('loading');
+                    this.querySelector('span').textContent = 'Downloading...';
+                    
+                    setTimeout(() => {
+                        this.closest('form').submit();
+                    }, 1500);
+                });
+            }
+
+            if (uninstallBtn) {
+                uninstallBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    if (confirm('Are you sure you want to uninstall this app?')) {
+                        this.classList.add('loading');
+                        this.querySelector('span').textContent = 'Uninstalling...';
+                        
+                        setTimeout(() => {
+                            this.closest('form').submit();
+                        }, 1500);
+                    }
+                });
+            }
+
+            // Auto-hide flash messages
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            });
+
+            // Smooth scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            const animatedElements = document.querySelectorAll('.app-header, .app-details, .reviews-section');
+            animatedElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(element);
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97bd949b123d913b',t:'MTc1NzMyNTQzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

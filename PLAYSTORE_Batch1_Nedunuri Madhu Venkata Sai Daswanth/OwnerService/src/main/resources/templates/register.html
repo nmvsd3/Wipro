@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Registration - Google Play Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <link rel="stylesheet" href="/css/register.css">
+   
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Play Console</span>
+            </div>
+            
+            <nav class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#apps">Apps</a>
+                <a href="#analytics">Analytics</a>
+                <a href="#support">Support</a>
+            </nav>
+            
+            <div class="header-actions">
+                <a href="/owner/login" class="btn-secondary">Sign In</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="register-container">
+            <!-- Left Side - Branding -->
+            <div class="register-branding">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                    </svg>
+                </div>
+                <h1 class="brand-title">Join Play Console</h1>
+                <p class="brand-subtitle">
+                    Start your journey as an Android developer and reach millions of users worldwide
+                </p>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-globe"></i>
+                        <span>Reach Global Audience</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Detailed Performance Analytics</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>Monetization Opportunities</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-support"></i>
+                        <span>24/7 Developer Support</span>
+                    </li>
+                </ul>
+                <div class="play-colors">
+                    <div class="color-dot"></div>
+                    <div class="color-dot"></div>
+                    <div class="color-dot"></div>
+                    <div class="color-dot"></div>
+                </div>
+            </div>
+
+            <!-- Right Side - Registration Form -->
+            <div class="register-form-container">
+                <div class="form-header">
+                    <h2 class="form-title">Create Account</h2>
+                    <p class="form-subtitle">Join thousands of developers on Play Console</p>
+                </div>
+
+                <!-- Error/Success Messages -->
+                <div th:if="${error}" class="message error-message" th:text="${error}">
+                    Error message will appear here
+                </div>
+                <div th:if="${success}" class="message success-message" th:text="${success}">
+                    Success message will appear here
+                </div>
+
+                <form th:action="@{/owner/register}" method="post" th:object="${owner}" class="register-form" id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <div class="input-group">
+                            <input type="text" th:field="*{name}" class="form-input" 
+                                   placeholder="Enter your full name" required id="nameInput"/>
+                            <i class="input-icon fas fa-user"></i>
+                        </div>
+                        <div class="validation-message" id="nameValidation"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <input type="email" th:field="*{email}" class="form-input" 
+                                   placeholder="Enter your email address" required id="emailInput"/>
+                            <i class="input-icon fas fa-envelope"></i>
+                        </div>
+                        <div class="validation-message" id="emailValidation"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <div class="input-group">
+                            <input type="text" th:field="*{phone}" class="form-input" 
+                                   placeholder="Enter your phone number" required id="phoneInput"/>
+                            <i class="input-icon fas fa-phone"></i>
+                        </div>
+                        <div class="validation-message" id="phoneValidation"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" th:field="*{password}" class="form-input" 
+                                   placeholder="Create a strong password" required id="passwordInput"/>
+                            <i class="input-icon fas fa-lock"></i>
+                            <button type="button" class="password-toggle" id="passwordToggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength" id="passwordStrength">
+                            <div class="strength-bar" id="strengthBar"></div>
+                        </div>
+                        <div class="strength-text" id="strengthText"></div>
+                        <div class="validation-message" id="passwordValidation"></div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Create Account</span>
+                    </button>
+                </form>
+
+                <div class="login-link">
+                    <p>Already have an account? <a href="/owner/login">Sign In</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+            <div class="footer-bottom">
+                <p>&copy; 2025 Google Play Console. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#twitter" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#facebook" aria-label="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#linkedin" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="#youtube" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form elements
+            const nameInput = document.getElementById('nameInput');
+            const emailInput = document.getElementById('emailInput');
+            const phoneInput = document.getElementById('phoneInput');
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordToggle = document.getElementById('passwordToggle');
+            const toggleIcon = passwordToggle.querySelector('i');
+            const registerForm = document.getElementById('registerForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Validation elements
+            const nameValidation = document.getElementById('nameValidation');
+            const emailValidation = document.getElementById('emailValidation');
+            const phoneValidation = document.getElementById('phoneValidation');
+            const passwordValidation = document.getElementById('passwordValidation');
+            const passwordStrength = document.getElementById('passwordStrength');
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+
+            // Password toggle functionality
+            passwordToggle.addEventListener('click', function() {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleIcon.classList.remove('fa-eye');
+                    toggleIcon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    toggleIcon.classList.remove('fa-eye-slash');
+                    toggleIcon.classList.add('fa-eye');
+                }
+            });
+
+            // Name validation
+            nameInput.addEventListener('input', function() {
+                const name = this.value.trim();
+                if (name.length < 2) {
+                    showValidation(nameValidation, 'Name must be at least 2 characters', 'error');
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else if (name.length > 50) {
+                    showValidation(nameValidation, 'Name must be less than 50 characters', 'error');
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else {
+                    showValidation(nameValidation, 'Name looks good!', 'success');
+                    this.classList.add('valid');
+                    this.classList.remove('invalid');
+                }
+            });
+
+            // Email validation
+            emailInput.addEventListener('input', function() {
+                const email = this.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!email) {
+                    hideValidation(emailValidation);
+                    this.classList.remove('valid', 'invalid');
+                } else if (!emailRegex.test(email)) {
+                    showValidation(emailValidation, 'Please enter a valid email address', 'error');
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else {
+                    showValidation(emailValidation, 'Email format is correct!', 'success');
+                    this.classList.add('valid');
+                    this.classList.remove('invalid');
+                }
+            });
+
+            // Phone validation
+            phoneInput.addEventListener('input', function() {
+                const phone = this.value.trim();
+                const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+                
+                if (!phone) {
+                    hideValidation(phoneValidation);
+                    this.classList.remove('valid', 'invalid');
+                } else if (phone.length < 10) {
+                    showValidation(phoneValidation, 'Phone number must be at least 10 digits', 'error');
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else if (!phoneRegex.test(phone)) {
+                    showValidation(phoneValidation, 'Please enter a valid phone number', 'error');
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else {
+                    showValidation(phoneValidation, 'Phone number looks good!', 'success');
+                    this.classList.add('valid');
+                    this.classList.remove('invalid');
+                }
+            });
+
+            // Password strength validation
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                const strength = calculatePasswordStrength(password);
+                
+                if (password.length === 0) {
+                    passwordStrength.classList.remove('show');
+                    hideValidation(passwordValidation);
+                    this.classList.remove('valid', 'invalid');
+                    return;
+                }
+
+                passwordStrength.classList.add('show');
+                
+                // Update strength bar
+                strengthBar.className = 'strength-bar';
+                strengthText.className = 'strength-text';
+                
+                if (strength.score === 0) {
+                    strengthBar.classList.add('strength-weak');
+                    strengthText.textContent = 'Very Weak';
+                    strengthText.style.color = 'var(--google-red)';
+                    showValidation(passwordValidation, 'Password is too weak', 'error');
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else if (strength.score === 1) {
+                    strengthBar.classList.add('strength-weak');
+                    strengthText.textContent = 'Weak';
+                    strengthText.style.color = 'var(--google-red)';
+                    showValidation(passwordValidation, 'Password could be stronger', 'error');
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else if (strength.score === 2) {
+                    strengthBar.classList.add('strength-fair');
+                    strengthText.textContent = 'Fair';
+                    strengthText.style.color = 'var(--google-orange)';
+                    showValidation(passwordValidation, 'Password is getting better', 'error');
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else if (strength.score === 3) {
+                    strengthBar.classList.add('strength-good');
+                    strengthText.textContent = 'Good';
+                    strengthText.style.color = 'var(--google-yellow)';
+                    showValidation(passwordValidation, 'Good password!', 'success');
+                    this.classList.add('valid');
+                    this.classList.remove('invalid');
+                } else {
+                    strengthBar.classList.add('strength-strong');
+                    strengthText.textContent = 'Strong';
+                    strengthText.style.color = 'var(--google-green)';
+                    showValidation(passwordValidation, 'Excellent password!', 'success');
+                    this.classList.add('valid');
+                    this.classList.remove('invalid');
+                }
+            });
+
+            // Password strength calculation
+            function calculatePasswordStrength(password) {
+                let score = 0;
+                
+                if (password.length >= 8) score++;
+                if (password.length >= 12) score++;
+                if (/[a-z]/.test(password)) score++;
+                if (/[A-Z]/.test(password)) score++;
+                if (/[0-9]/.test(password)) score++;
+                if (/[^A-Za-z0-9]/.test(password)) score++;
+                
+                return {
+                    score: Math.min(score, 4)
+                };
+            }
+
+            // Validation helper functions
+            function showValidation(element, message, type) {
+                element.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+                element.className = `validation-message ${type}`;
+                element.style.display = 'flex';
+            }
+
+            function hideValidation(element) {
+                element.style.display = 'none';
+            }
+
+            // Form submission with loading state
+            registerForm.addEventListener('submit', function() {
+                submitBtn.classList.add('loading');
+                submitBtn.querySelector('.btn-text').style.opacity = '0';
+            });
+
+            // Input focus animations
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Auto-hide messages after 5 seconds
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            });
+
+            // Add ripple effect to submit button
+            submitBtn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+
+            // Form validation on submit
+            registerForm.addEventListener('submit', function(e) {
+                const isValid = validateForm();
+                if (!isValid) {
+                    e.preventDefault();
+                    submitBtn.classList.remove('loading');
+                    submitBtn.querySelector('.btn-text').style.opacity = '1';
+                }
+            });
+
+            function validateForm() {
+                let isValid = true;
+                
+                // Check all inputs
+                inputs.forEach(input => {
+                    if (!input.classList.contains('valid') && input.hasAttribute('required')) {
+                        isValid = false;
+                        input.classList.add('invalid');
+                    }
+                });
+                
+                return isValid;
+            }
+
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97bb0c10e07e9a5e',t:'MTc1NzI5ODg3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Apps - Google Play Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/user-apps.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Play Store</span>
+            </div>
+            
+            <div class="breadcrumb">
+                <a href="/user/dashboard">Dashboard</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Browse Apps</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Discover Amazing Apps</h1>
+            <p class="page-subtitle">Browse through our collection of apps and games. Find your next favorite app!</p>
+        </div>
+
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            <div th:if="${success}" class="message success">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${success}">Success message</span>
+            </div>
+            <div th:if="${error}" class="message error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${error}">Error message</span>
+            </div>
+            <div th:if="${message}" class="message info">
+                <i class="fas fa-info-circle"></i>
+                <span th:text="${message}">Info message</span>
+            </div>
+        </div>
+
+        <!-- Browse Controls -->
+        <div class="browse-controls">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search apps...">
+            </div>
+            
+            <div class="browse-actions">
+                <select class="filter-select" id="genreFilter">
+                    <option value="">All Genres</option>
+                    <option value="games">Games</option>
+                    <option value="productivity">Productivity</option>
+                    <option value="social">Social</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="education">Education</option>
+                </select>
+                
+                <select class="filter-select" id="sortSelect">
+                    <option value="name">Sort by Name</option>
+                    <option value="rating">Sort by Rating</option>
+                    <option value="genre">Sort by Genre</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Apps Grid -->
+        <div th:if="${apps != null and !#lists.isEmpty(apps)}" class="apps-grid" id="appsGrid">
+            <div th:each="app : ${apps}" class="app-card" 
+                 th:data-name="${app.name.toLowerCase()}" 
+                 th:data-genre="${app.genre.toLowerCase()}"
+                 th:data-rating="${app.rating != null ? app.rating : 0}">
+                
+                <div class="app-header">
+                    <div class="app-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    
+                    <div class="app-info">
+                        <h3 class="app-name" th:text="${app.name}">App Name</h3>
+                        <span class="app-genre" th:text="${app.genre}">Genre</span>
+                    </div>
+                </div>
+
+                <div class="app-rating">
+                    <div class="stars">
+                        <i class="fas fa-star star" th:classappend="${app.rating != null and app.rating >= 1} ? 'filled' : ''"></i>
+                        <i class="fas fa-star star" th:classappend="${app.rating != null and app.rating >= 2} ? 'filled' : ''"></i>
+                        <i class="fas fa-star star" th:classappend="${app.rating != null and app.rating >= 3} ? 'filled' : ''"></i>
+                        <i class="fas fa-star star" th:classappend="${app.rating != null and app.rating >= 4} ? 'filled' : ''"></i>
+                        <i class="fas fa-star star" th:classappend="${app.rating != null and app.rating >= 5} ? 'filled' : ''"></i>
+                    </div>
+                    <span class="rating-text" th:text="${app.rating != null ? app.rating + '/5' : 'No rating'}">Rating</span>
+                </div>
+
+                <!-- ✅ Updated Actions -->
+                <div class="app-actions">
+                    <a th:href="@{/user/apps/{id}(id=${app.id})}" class="action-btn btn-primary">
+                        <i class="fas fa-eye"></i>
+                        <span>View Details</span>
+                    </a>
+
+                    <!-- If app already downloaded, show Uninstall -->
+                   <!-- If update available, show Update button -->
+<form th:if="${app.downloaded and app.updateAvailable}" 
+      th:action="@{/user/apps/{id}/download(id=${app.id})}" method="post" style="flex: 1;">
+    <button type="submit" class="action-btn btn-warning">
+        <i class="fas fa-sync-alt"></i>
+        <span>Update</span>
+    </button>
+</form>
+
+<!-- If downloaded but no update, show Uninstall -->
+<form th:if="${app.downloaded and !app.updateAvailable}" 
+      th:action="@{/user/apps/{id}/uninstall(id=${app.id})}" method="post" style="flex: 1;">
+    <button type="submit" class="action-btn btn-danger">
+        <i class="fas fa-trash-alt"></i>
+        <span>Uninstall</span>
+    </button>
+</form>
+
+<!-- If never downloaded, show Download -->
+<form th:unless="${app.downloaded}" 
+      th:action="@{/user/apps/{id}/download(id=${app.id})}" method="post" style="flex: 1;">
+    <button type="button" class="action-btn btn-success download-btn">
+        <i class="fas fa-download"></i>
+        <span>Download</span>
+    </button>
+</form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${apps == null or #lists.isEmpty(apps)}" class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h2 class="empty-title">No Apps Available</h2>
+            <p class="empty-subtitle">There are currently no apps to browse. Check back later for new additions to our app store!</p>
+        </div>
+
+        <!-- Back Button -->
+        <a href="/user/dashboard" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const genreFilter = document.getElementById('genreFilter');
+            const sortSelect = document.getElementById('sortSelect');
+            const appsGrid = document.getElementById('appsGrid');
+            const appCards = document.querySelectorAll('.app-card');
+
+            // Search and filter functionality
+            function filterApps() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedGenre = genreFilter.value.toLowerCase();
+                let visibleCount = 0;
+
+                appCards.forEach(card => {
+                    const appName = card.dataset.name;
+                    const appGenre = card.dataset.genre;
+                    
+                    const matchesSearch = appName.includes(searchTerm);
+                    const matchesGenre = !selectedGenre || appGenre.includes(selectedGenre);
+                    const isVisible = matchesSearch && matchesGenre;
+                    
+                    card.style.display = isVisible ? 'block' : 'none';
+                    if (isVisible) visibleCount++;
+                });
+            }
+
+            // Sort functionality
+            function sortApps() {
+                const sortBy = sortSelect.value;
+                const cardsArray = Array.from(appCards);
+
+                cardsArray.sort((a, b) => {
+                    switch (sortBy) {
+                        case 'name':
+                            return a.dataset.name.localeCompare(b.dataset.name);
+                        case 'rating':
+                            return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
+                        case 'genre':
+                            return a.dataset.genre.localeCompare(b.dataset.genre);
+                        default:
+                            return 0;
+                    }
+                });
+
+                // Reorder DOM elements
+                cardsArray.forEach(card => {
+                    if (appsGrid) {
+                        appsGrid.appendChild(card);
+                    }
+                });
+            }
+
+            // Event listeners
+            if (searchInput) {
+                searchInput.addEventListener('input', filterApps);
+            }
+            
+            if (genreFilter) {
+                genreFilter.addEventListener('change', filterApps);
+            }
+            
+            if (sortSelect) {
+                sortSelect.addEventListener('change', sortApps);
+            }
+
+            // Download functionality
+            const downloadBtns = document.querySelectorAll('.download-btn');
+            downloadBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Add loading state
+                    this.classList.add('loading');
+                    this.querySelector('span').textContent = 'Downloading...';
+                    
+                    // Submit the form after a delay
+                    setTimeout(() => {
+                        this.closest('form').submit();
+                    }, 1500);
+                });
+            });
+
+            // Auto-hide flash messages
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+
+            // Smooth scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            appCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

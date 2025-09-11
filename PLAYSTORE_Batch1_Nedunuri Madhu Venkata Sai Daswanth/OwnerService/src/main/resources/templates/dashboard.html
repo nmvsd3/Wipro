@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Owner Dashboard - Google Play Console</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar Toggle Button (Mobile) -->
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/owner/dashboard" class="sidebar-brand">
+                    <div class="play-icon">
+                        <i class="fab fa-google-play"></i>
+                    </div>
+                    Play Console
+                </a>
+                <div class="sidebar-user">
+                    <div class="user-avatar" th:text="${owner.name != null ? owner.name.substring(0,1).toUpperCase() : 'U'}"></div>
+                    <div class="user-info">
+                        <h4 th:text="${owner.name}">Owner Name</h4>
+                        <p>App Developer</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+    <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <div class="nav-item">
+            <a href="/owner/dashboard" class="nav-link active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/owner/apps/upload" class="nav-link">
+                <i class="fas fa-plus-circle"></i>
+                <span>Upload App</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Apps</div>
+        <div class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fas fa-mobile-alt"></i>
+                <span>My Apps</span>
+                <span class="nav-badge" th:text="${apps.size()}">0</span>
+            </a>
+        </div>
+        <!-- ✅ Analytics removed -->
+        <div class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fas fa-star"></i>
+                <span>Reviews</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Tools</div>
+        <div class="nav-item">
+            <!-- Changed: gave this link an id so JS can toggle notifications -->
+            <a href="#" id="notificationsLink" class="nav-link" title="Show/hide notifications">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+                <span class="nav-badge" th:text="${notifications.size()}">0</span>
+            </a>
+        </div>
+        <!-- ✅ Settings removed -->
+        <div class="nav-item">
+            <a href="/owner/logout" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-content">
+                    <h1 class="header-title">Dashboard</h1>
+                    <div class="header-actions">
+                        <!-- header notification button toggles same Notifications section -->
+                        <button class="notification-btn" id="headerNotificationBtn" aria-label="Toggle notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge" th:if="${notifications.size() > 0}" th:text="${notifications.size()}"></span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Alert Messages -->
+                <div th:if="${success}" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${success}"></span>
+                </div>
+                <div th:if="${error}" class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:text="${error}"></span>
+                </div>
+
+                <!-- Dashboard Overview -->
+                <div class="row mb-4">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="stats-number" th:text="${totalDownloads}">0</div>
+                            <div class="stats-label">Total Downloads</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div class="stats-number" th:text="${apps.size()}">0</div>
+                            <div class="stats-label">Published Apps</div>
+                        </div>
+                    </div>
+                    
+
+                <!-- My Apps Section -->
+                <div class="section-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="section-title mb-0">
+                            <i class="fas fa-mobile-alt"></i>
+                            My Apps
+                        </h3>
+                        <a href="/owner/apps/upload" class="add-app-btn">
+                            <i class="fas fa-plus"></i>
+                            Add New App
+                        </a>
+                    </div>
+
+                    <div class="apps-grid">
+                        <div th:each="app : ${apps}" class="app-card">
+                            <div class="visibility-badge" th:class="${app.visible} ? 'visibility-badge visible' : 'visibility-badge hidden'" 
+                                 th:text="${app.visible} ? 'Live' : 'Hidden'"></div>
+                            
+                            <div class="app-header">
+                                <div class="app-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="app-info">
+                                    <h4 th:text="${app.name}">App Name</h4>
+                                    <span class="app-genre" th:text="${app.genre}">Category</span>
+                                </div>
+                            </div>
+
+                            <div class="app-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number" th:text="${app.downloadCount}">0</div>
+                                    <div class="stat-label">Downloads</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number" th:text="${app.version}">1.0</div>
+                                    <div class="stat-label">Version</div>
+                                </div>
+                            </div>
+
+                            <div class="app-actions">
+                                <a th:href="@{'/owner/apps/edit/' + ${app.id}}" class="btn btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </a>
+                                <a th:href="@{'/owner/apps/' + ${app.id} + '/reviews'}" class="btn btn-success">
+                                    <i class="fas fa-comments"></i>
+                                    Reviews
+                                </a>
+                                <a th:href="@{'/owner/apps/delete/' + ${app.id}}" 
+                                   onclick="return confirm('Are you sure you want to delete this app?')" 
+                                   class="btn btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </a>
+                            </div>
+
+                            <form th:action="@{'/owner/apps/' + ${app.id} + '/announce'}" method="post" class="announcement-form">
+                                <input type="text" name="message" class="form-control" 
+                                       placeholder="Send announcement to users..." required/>
+                                <button type="submit" class="btn btn-outline">
+                                    <i class="fas fa-bullhorn"></i>
+                                    Send Announcement
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div th:if="${apps.size() == 0}" class="text-center py-5">
+                        <i class="fas fa-mobile-alt" style="font-size: 64px; color: var(--google-grey-300); margin-bottom: 20px;"></i>
+                        <h4 style="color: var(--google-grey-500);">No apps published yet</h4>
+                        <p style="color: var(--google-grey-400);">Start by uploading your first app to the Play Store</p>
+                        <a href="/owner/apps/upload" class="add-app-btn mt-3">
+                            <i class="fas fa-plus"></i>
+                            Upload Your First App
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Notifications Section -->
+                <!-- Changed: added id so the sidebar link and header button can toggle it -->
+                <div class="section-card" id="notificationsSection" role="region" aria-labelledby="notificationsHeading">
+                    <h3 class="section-title" id="notificationsHeading">
+                        <i class="fas fa-bell"></i>
+                        Recent Notifications
+                    </h3>
+                    
+                    <!-- This wrapper is what we show/hide -->
+                    <div id="notificationsBody">
+                        <div th:if="${notifications.size() > 0}">
+                            <div th:each="n : ${notifications}" class="notification-item">
+                                <div class="notification-subject" th:text="${n.subject}">Notification Subject</div>
+                                <div class="notification-body" th:text="${n.body}">Notification message content</div>
+                                <div class="notification-time" th:text="${n.createdAt}">Just now</div>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${notifications.size() == 0}" class="no-notifications">
+                            <i class="fas fa-bell-slash" style="font-size: 48px; margin-bottom: 15px; display: block;"></i>
+                            No notifications yet. You'll see important updates about your apps here.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth animations to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Add click animation
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // Add loading state to announcement forms
+            document.querySelectorAll('.announcement-form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    const button = this.querySelector('button[type="submit"]');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    button.disabled = true;
+                    
+                    // Re-enable after 3 seconds (in case of error)
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }, 3000);
+                });
+            });
+
+            // Animate stats numbers
+            document.querySelectorAll('.stats-number').forEach(element => {
+                const target = parseInt(element.textContent) || 0;
+                const increment = Math.max(1, Math.floor(target / 50));
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    element.textContent = current;
+                }, 30);
+            });
+
+            // Sidebar toggle functionality
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('show');
+            }
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when clicking nav links on mobile
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('open');
+                        sidebarOverlay.classList.remove('show');
+                    }
+                });
+            });
+
+            // ---------- NEW: Notifications toggle behavior ----------
+            const notificationsLink = document.getElementById('notificationsLink');
+            const headerNotificationBtn = document.getElementById('headerNotificationBtn');
+            const notificationsSection = document.getElementById('notificationsSection');
+            const notificationsBody = document.getElementById('notificationsBody');
+
+            // Helper to toggle the notifications body visibility
+            function toggleNotifications(focusAndScroll = true) {
+                if (!notificationsBody) return;
+                const wasHidden = notificationsBody.classList.contains('d-none');
+                if (wasHidden) {
+                    notificationsBody.classList.remove('d-none');
+                    // mark link active
+                    notificationsLink.classList.add('active');
+                } else {
+                    notificationsBody.classList.add('d-none');
+                    notificationsLink.classList.remove('active');
+                }
+
+                // Optionally scroll to section when revealing
+                if (focusAndScroll && !wasHidden === false) {
+                    // if we just showed it, scroll into view
+                    if (!notificationsBody.classList.contains('d-none')) {
+                        notificationsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+
+            // Initially, we keep notifications visible as in original page.
+            // If you prefer to keep them hidden on page load, uncomment the next line:
+            // notificationsBody.classList.add('d-none');
+
+            // Clicking the sidebar Notifications link toggles the section
+            if (notificationsLink) {
+                notificationsLink.addEventListener('click', function(e) {
+                    e.preventDefault(); // don't navigate away
+                    toggleNotifications(true);
+                });
+            }
+
+            // Header bell toggles too
+            if (headerNotificationBtn) {
+                headerNotificationBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleNotifications(true);
+                });
+            }
+
+            // If user clicks any notification item, you could hide it or do other actions.
+            // Example: hide the notifications area when user clicks outside of it (optional)
+            document.addEventListener('click', function(e) {
+                const target = e.target;
+                const clickedInside = notificationsSection.contains(target) || (notificationsLink && notificationsLink.contains(target)) || (headerNotificationBtn && headerNotificationBtn.contains(target));
+                // if you want clicking outside to collapse notifications, uncomment:
+                // if (!clickedInside && !notificationsBody.classList.contains('d-none')) {
+                //     notificationsBody.classList.add('d-none');
+                //     notificationsLink.classList.remove('active');
+                // }
+            });
+            // ---------- END Notifications toggle behavior ----------
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b621d5d23a7f2e',t:'MTc1NzI0NzMzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

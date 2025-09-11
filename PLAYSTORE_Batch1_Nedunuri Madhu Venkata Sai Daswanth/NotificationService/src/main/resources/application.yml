@@ -1,0 +1,25 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: notification-service
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: nedunurimadhu93472@gmail.com   #  App Password only, not Gmail password
+    password: meoy vrlv rpct khot
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+eureka:
+  client:
+    register-with-eureka: true    #  ensure client registers
+    fetch-registry: true          #  ensure registry is fetched
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

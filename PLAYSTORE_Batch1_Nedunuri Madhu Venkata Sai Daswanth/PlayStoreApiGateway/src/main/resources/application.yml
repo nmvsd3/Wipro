@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  main:
+    web-application-type: reactive   # Gateway must run in reactive mode
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: owner-service
+              uri: lb://owner-service
+              predicates:
+                - Path=/owner/**
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/user/**
+            - id: notification-service
+              uri: lb://notification-service
+              predicates:
+                - Path=/notify/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

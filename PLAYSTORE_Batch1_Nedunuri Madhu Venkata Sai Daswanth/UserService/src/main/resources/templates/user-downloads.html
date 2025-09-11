@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library - Google Play Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/user-downloads.css">
+    
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Play Store</span>
+            </div>
+            
+            <div class="breadcrumb">
+                <a href="/user/dashboard">Dashboard</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>My Library</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1>My Library</h1>
+                <p class="header-subtitle">Manage your downloaded apps and games</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-number" th:text="${#lists.size(downloads)}">0</span>
+                    <span class="stat-label">Apps Installed</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            <div th:if="${success}" class="message success">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${success}">Success message</span>
+            </div>
+            <div th:if="${error}" class="message error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${error}">Error message</span>
+            </div>
+        </div>
+
+        <!-- Library Controls -->
+        <div class="library-controls">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search your apps...">
+            </div>
+            
+            <div class="library-actions">
+                <select class="sort-select" id="sortSelect">
+                    <option value="name">Sort by Name</option>
+                    <option value="date">Sort by Install Date</option>
+                    <option value="size">Sort by Size</option>
+                </select>
+                
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Apps Grid -->
+        <div th:if="${downloads != null and !#lists.isEmpty(downloads)}" class="apps-grid" id="appsGrid">
+            <div th:each="download : ${downloads}" class="app-card" 
+                 th:data-name="${download.appName.toLowerCase()}" 
+                 th:data-date="${download.downloadedAt}">
+                
+                <div class="app-header">
+                    <div class="app-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    
+                    <div class="app-info">
+                        <h3 class="app-name" th:text="${download.appName}">App Name</h3>
+                        <span class="app-category">Application</span>
+                    </div>
+                </div>
+
+                <div class="app-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Installed</div>
+                        <div class="meta-value download-date" th:text="${#temporals.format(download.downloadedAt, 'MMM dd, yyyy')}">Download Date</div>
+                    </div>
+                </div>
+
+                <div class="app-actions">
+                    <button class="action-btn btn-primary" onclick="openApp(this)">
+                        <i class="fas fa-play"></i>
+                        <span>Open</span>
+                    </button>
+                    
+                    <form th:action="@{/user/apps/{id}/uninstall(id=${download.id})}" method="post" style="flex: 1;">
+                        <button type="button" class="action-btn btn-danger uninstall-btn" 
+                                th:data-app-name="${download.appName}"
+                                th:data-form-action="@{/user/apps/{id}/uninstall(id=${download.id})}">
+                            <i class="fas fa-trash"></i>
+                            <span>Uninstall</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${downloads == null or #lists.isEmpty(downloads)}" class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <h2 class="empty-title">No Apps Installed</h2>
+            <p class="empty-subtitle">You haven't downloaded any apps yet. Browse the Play Store to discover amazing apps and games!</p>
+            <a href="/user/apps" class="empty-action">
+                <i class="fas fa-store"></i>
+                Browse Apps
+            </a>
+        </div>
+
+        <!-- Back Button -->
+        <a href="/user/dashboard" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="modal-title">Uninstall App</h3>
+                <p class="modal-text">Are you sure you want to uninstall <strong id="appNameToUninstall">this app</strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" id="confirmUninstall">Uninstall</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const sortSelect = document.getElementById('sortSelect');
+            const appsGrid = document.getElementById('appsGrid');
+            const appCards = document.querySelectorAll('.app-card');
+            const confirmModal = document.getElementById('confirmModal');
+            const appNameToUninstall = document.getElementById('appNameToUninstall');
+            const confirmUninstallBtn = document.getElementById('confirmUninstall');
+            let currentUninstallForm = null;
+
+            // Search functionality
+            function filterApps() {
+                const searchTerm = searchInput.value.toLowerCase();
+                let visibleCount = 0;
+
+                appCards.forEach(card => {
+                    const appName = card.dataset.name;
+                    const isVisible = appName.includes(searchTerm);
+                    
+                    card.style.display = isVisible ? 'block' : 'none';
+                    if (isVisible) visibleCount++;
+                });
+
+                // Update stats
+                document.querySelector('.stat-number').textContent = visibleCount;
+            }
+
+            // Sort functionality
+            function sortApps() {
+                const sortBy = sortSelect.value;
+                const cardsArray = Array.from(appCards);
+
+                cardsArray.sort((a, b) => {
+                    switch (sortBy) {
+                        case 'name':
+                            return a.dataset.name.localeCompare(b.dataset.name);
+                        case 'date':
+                            return new Date(b.dataset.date) - new Date(a.dataset.date);
+                        case 'size':
+                            // Random sort for demo (would use actual size data)
+                            return Math.random() - 0.5;
+                        default:
+                            return 0;
+                    }
+                });
+
+                // Reorder DOM elements
+                cardsArray.forEach(card => {
+                    if (appsGrid) {
+                        appsGrid.appendChild(card);
+                    }
+                });
+            }
+
+            // Event listeners
+            if (searchInput) {
+                searchInput.addEventListener('input', filterApps);
+            }
+            
+            if (sortSelect) {
+                sortSelect.addEventListener('change', sortApps);
+            }
+
+            // View toggle functionality
+            const viewBtns = document.querySelectorAll('.view-btn');
+            viewBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const view = this.dataset.view;
+                    if (appsGrid) {
+                        if (view === 'list') {
+                            appsGrid.style.gridTemplateColumns = '1fr';
+                        } else {
+                            appsGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
+                        }
+                    }
+                });
+            });
+
+            // Uninstall confirmation
+            const uninstallBtns = document.querySelectorAll('.uninstall-btn');
+            uninstallBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const appName = this.dataset.appName;
+                    const formAction = this.dataset.formAction;
+                    
+                    appNameToUninstall.textContent = appName;
+                    currentUninstallForm = this.closest('form');
+                    confirmModal.classList.add('active');
+                });
+            });
+
+            // Confirm uninstall
+            confirmUninstallBtn.addEventListener('click', function() {
+                if (currentUninstallForm) {
+                    this.classList.add('loading');
+                    this.textContent = 'Uninstalling...';
+                    
+                    // Submit the form
+                    setTimeout(() => {
+                        currentUninstallForm.submit();
+                    }, 1000);
+                }
+            });
+
+            // Open app functionality
+            window.openApp = function(btn) {
+                btn.classList.add('loading');
+                btn.querySelector('span').textContent = 'Opening...';
+                
+                setTimeout(() => {
+                    btn.classList.remove('loading');
+                    btn.querySelector('span').textContent = 'Open';
+                    alert('App opened! (This is a demo)');
+                }, 2000);
+            };
+
+            // Close modal
+            window.closeModal = function() {
+                confirmModal.classList.remove('active');
+                currentUninstallForm = null;
+                confirmUninstallBtn.classList.remove('loading');
+                confirmUninstallBtn.textContent = 'Uninstall';
+            };
+
+            // Close modal on overlay click
+            confirmModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            // Auto-hide flash messages
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+                if (e.key === 'Escape' && confirmModal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+            // Smooth scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            appCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97bd84dd3305913b',t:'MTc1NzMyNDc4OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

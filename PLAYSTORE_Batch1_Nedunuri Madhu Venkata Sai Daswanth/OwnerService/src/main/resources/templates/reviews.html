@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>App Reviews - Google Play Console</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/review.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar Toggle Button (Mobile) -->
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/owner/dashboard" class="sidebar-brand">
+                    <div class="play-icon">
+                        <i class="fab fa-google-play"></i>
+                    </div>
+                    Play Console
+                </a>
+                <div class="sidebar-user">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <h4>App Developer</h4>
+                        <p>Owner</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <div class="nav-item">
+                        <a href="/owner/dashboard" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/owner/apps/upload" class="nav-link">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Upload App</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Apps</div>
+                    <div class="nav-item">
+                        <a href="/owner/apps" class="nav-link">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>My Apps</span>
+                        </a>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="fas fa-star"></i>
+                            <span>Reviews</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Tools</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                            <span class="nav-badge">0</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/owner/logout" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <!-- Header -->
+            <header class="reviews-header">
+                <div class="header-content">
+                    <h1 class="header-title">App Reviews</h1>
+                    <nav class="breadcrumb-nav">
+                        <a href="/owner/dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                        <i class="fas fa-chevron-right"></i>
+                        <a href="/owner/apps">My Apps</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Reviews</span>
+                    </nav>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- App Header -->
+                <div class="app-header">
+                    <div class="app-info">
+                        <div class="app-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="app-details">
+                            <h1 th:text="${app.name}">App Name</h1>
+                            <p>User reviews and ratings for this application</p>
+                        </div>
+                    </div>
+                    
+                    <div class="app-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" th:text="${reviews != null ? reviews.size() : 0}">0</div>
+                            <div class="stat-label">Total Reviews</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Controls -->
+                <div th:if="${reviews != null and !#lists.isEmpty(reviews)}" class="reviews-controls">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search reviews..." id="searchInput">
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-rating="all">
+                            <i class="fas fa-list"></i>
+                            All Reviews
+                        </button>
+                        <button class="filter-btn" data-rating="5">
+                            <i class="fas fa-star"></i>
+                            5 Stars
+                        </button>
+                        <button class="filter-btn" data-rating="4">
+                            <i class="fas fa-star"></i>
+                            4 Stars
+                        </button>
+                        <button class="filter-btn" data-rating="3">
+                            <i class="fas fa-star"></i>
+                            3 Stars
+                        </button>
+                        <button class="filter-btn" data-rating="2">
+                            <i class="fas fa-star"></i>
+                            2 Stars
+                        </button>
+                        <button class="filter-btn" data-rating="1">
+                            <i class="fas fa-star"></i>
+                            1 Star
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reviews List -->
+                <div th:if="${reviews != null and !#lists.isEmpty(reviews)}" class="reviews-list" id="reviewsList">
+                    <div th:each="review : ${reviews}" class="review-card" th:data-rating="${review.rating}">
+                        <div class="review-header">
+                            <div class="reviewer-avatar" th:style="'background-color: ' + ${#strings.substring(review.userName, 0, 1) == 'A' ? '#1a73e8' : (#strings.substring(review.userName, 0, 1) == 'B' ? '#34a853' : (#strings.substring(review.userName, 0, 1) == 'C' ? '#ea4335' : (#strings.substring(review.userName, 0, 1) == 'D' ? '#fbbc04' : '#ff6d01')))}">
+                                <span th:text="${#strings.substring(review.userName, 0, 1)}">U</span>
+                            </div>
+                            <div class="reviewer-info">
+                                <div class="reviewer-name" th:text="${review.userName}">User Name</div>
+                                <div class="review-date">2 days ago</div>
+                            </div>
+                            <div class="review-rating">
+                                <div class="stars">
+                                    <span class="star" th:class="${review.rating >= 1 ? 'star filled' : 'star'}">★</span>
+                                    <span class="star" th:class="${review.rating >= 2 ? 'star filled' : 'star'}">★</span>
+                                    <span class="star" th:class="${review.rating >= 3 ? 'star filled' : 'star'}">★</span>
+                                    <span class="star" th:class="${review.rating >= 4 ? 'star filled' : 'star'}">★</span>
+                                    <span class="star" th:class="${review.rating >= 5 ? 'star filled' : 'star'}">★</span>
+                                </div>
+                                <span class="rating-text" th:class="'rating-' + ${review.rating}" th:text="${review.rating}">5</span>
+                            </div>
+                        </div>
+                        <div class="review-comment" th:text="${review.comment}">
+                            This is a sample review comment that shows how the review text will be displayed in the interface.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${reviews == null or #lists.isEmpty(reviews)}" class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h2 class="empty-title">No Reviews Yet</h2>
+                    <p class="empty-subtitle">
+                        This app hasn't received any reviews from users yet.<br>
+                        Reviews will appear here once users start rating and commenting on your app.
+                    </p>
+                </div>
+
+                <!-- Back Button -->
+                <div class="text-center">
+                    <a href="/owner/apps" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to My Apps
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle functionality
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('show');
+            }
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', toggleSidebar);
+            }
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', toggleSidebar);
+            }
+
+            // Close sidebar when clicking nav links on mobile
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('open');
+                        sidebarOverlay.classList.remove('show');
+                    }
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            const reviewCards = document.querySelectorAll('.review-card');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    
+                    reviewCards.forEach(card => {
+                        const userName = card.querySelector('.reviewer-name').textContent.toLowerCase();
+                        const comment = card.querySelector('.review-comment').textContent.toLowerCase();
+                        
+                        if (userName.includes(searchTerm) || comment.includes(searchTerm)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filterRating = this.dataset.rating;
+                    
+                    reviewCards.forEach(card => {
+                        if (filterRating === 'all') {
+                            card.style.display = 'block';
+                        } else {
+                            const cardRating = card.dataset.rating;
+                            if (cardRating === filterRating) {
+                                card.style.display = 'block';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+
+            // Animate stats numbers
+            document.querySelectorAll('.stat-number').forEach(element => {
+                const target = parseInt(element.textContent) || 0;
+                if (target > 0) {
+                    const increment = Math.max(1, Math.floor(target / 30));
+                    let current = 0;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        element.textContent = current;
+                    }, 50);
+                }
+            });
+
+            // Add hover effects to review cards
+            reviewCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b63bded2f57f2e',t:'MTc1NzI0ODM5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
